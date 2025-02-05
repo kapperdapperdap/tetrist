@@ -9,6 +9,15 @@ window.addEventListener('load', function() {
     // Draw a rectangle (square in this case since width and height are the same)
     //ctx.fillRect(5*CELL_SIZE,5*CELL_SIZE, CELL_SIZE, CELL_SIZE);
     console.log(Piece);
-    Piece.draw(ctx);
+    //Snake.update();
+
+
+    function animate() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        Piece.draw(ctx);
+        Piece.update();
+    }
+
+    this.setInterval(animate, 500);
 
 });

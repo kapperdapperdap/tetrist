@@ -11,13 +11,15 @@ window.addEventListener('load', function() {
     console.log(Piece);
     //Snake.update();
 
+    let board = new Board();
+    let currentPiece = new Piece("S");
 
-    function animate() {
-        ctx.clearRect(0,0,canvas.width, canvas.height);
-        Piece.draw(ctx);
-        Piece.update();
+    function gameLoop() {
+        ctx.clearRect(0,0, canvas.width, canvas.height);
+        currentPiece.update();
+        currentPiece.draw(ctx);
     }
 
-    this.setInterval(animate, 500);
+    this.setInterval(gameLoop, 500);
 
 });

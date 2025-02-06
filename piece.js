@@ -14,6 +14,7 @@ class Piece {
         this.position = { x, y };
         this.velocity = { x: 0, y: 1 };
         this.segments = SHAPES[type]; // Assign shape
+        this.isPlaced = false; // Track when the piece is placed
     }
 
     draw(context) {
@@ -28,7 +29,27 @@ class Piece {
     });
 }
 
-    update() {
+checkCollision(board) {
+    return this.segments.some(segment => {
+        let newX = this.position.x + segment.x;
+        let newY = this.position.y + segment.y + 1;
+
+        // If piece on bottom row
+        if (newY >= board.rows) return true;
+
+        // If the next position is occupied
+        return board.grid[newY][newX] !== 0;
+    });
+}
+
+    update(board) {
+        if (this.checkCollision(board)) {
+            // Stop the piece and place it
+            board.placePiece(this);
+            this.isPlaced = true;
+            return;
+        }
+        // Move down if no collision
         this.position.y += this.velocity.y;
     }
 }

@@ -34,6 +34,7 @@ class Board {
 
     // Place the piece in the grid
     placePiece(piece) {
+        //Place piece on grid
         piece.segments.forEach(segment => {
             let x = piece.position.x + segment.x;
             let y = piece.position.y + segment.y;
@@ -42,7 +43,26 @@ class Board {
             if (y >= 0 && y < this.rows && x >= 0 && x < this.cols) {
                 this.grid[y][x] = 1;
             }
+        });
 
-        })
+        // After placing the piece, clear the rows
+        this.clearRows();
+    }
+
+    clearRows() {
+        // Filter out full rows
+        let newGrid = this.grid.filter(row => row.some(cell => cell === 0));
+        let rowsCleared = this.rows - newGrid.length;
+        
+        // Add empty rows to the top
+        while (newGrid.length < this.rows) {
+            newGrid.unshift(new Array(this.cols).fill(0));
+        }
+        
+        this.grid = newGrid;
+        
+        if (rowsCleared > 0) {
+            console.log(`Cleared ${rowsCleared} row(s)!`);
+        }
     }
 }

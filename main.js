@@ -15,6 +15,8 @@ window.addEventListener('load', function() {
     let softDrop = false;
     let lastRotateTime = 0;
     let rotateCooldown = 200; // Prevent rotating too quickly
+    let lastHardDropTime = 0;
+    let hardDropDelay = 200;
 
     function getRandomPiece() {
         const types = Object.keys(SHAPES);
@@ -47,7 +49,7 @@ window.addEventListener('load', function() {
         // Rotate (Throttled)
         if (now - lastRotateTime > rotateCooldown) {
             if (keys['ArrowUp'] || keys['w']) {
-                currentPiece.rotateRight(board);
+                currentPiece.rotateLeft(board);
                 lastRotateTime = now;
             }
         }
@@ -58,6 +60,16 @@ window.addEventListener('load', function() {
         } else {
             softDrop = false;
         }
+
+        // Hard Drop
+        if (now - lastHardDropTime > hardDropDelay) {
+            if (keys[' ']) { //spacebar
+                currentPiece.hardDrop(board);
+                lastHardDropTime = now;
+
+            }            
+        }
+
     }
 
     function gameLoop(timestamp) {

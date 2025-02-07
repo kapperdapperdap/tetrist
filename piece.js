@@ -132,7 +132,7 @@ class Piece {
         // If the new rotation resultts in collision, roll back:
         if (this.hasCollision(board)) {
             this.rotation = oldRotation;
-            this.segments = SHAPES[this.type][this.roation];
+            this.segments = SHAPES[this.type][this.rotation];
         }
     }
 
@@ -169,6 +169,13 @@ class Piece {
         }
     }
 
+    hardDrop(board) {
+        while (!this.checkCollision(board)) {
+            this.position.y += 1; // move down until collision
+        }
+        board.placePiece(this);
+        this.isPlaced = true;
+    }
 
     // Collision if piece moves down 1
     checkCollision(board) {
@@ -211,7 +218,7 @@ class Piece {
             // Stop the piece and place it
             board.placePiece(this);
             this.isPlaced = true;
-            return;
+            return new Piece(getRandomPiece());
         }
         // Move down if no collision
         this.position.y += this.velocity.y;

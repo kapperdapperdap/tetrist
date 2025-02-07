@@ -2,7 +2,8 @@ class Board {
     constructor(rows = 20, cols = 10) {
         this.rows = rows;
         this.cols = cols;
-        this.grid = Array.from({length:rows}, () => Array(cols).fill(0));    
+        this.grid = Array.from({length:rows}, () => Array(cols).fill(0));   
+        this.score = 0; 
     }
 
     draw(context) {
@@ -62,7 +63,16 @@ class Board {
         this.grid = newGrid;
         
         if (rowsCleared > 0) {
+            this.updateScore(rowsCleared);
             console.log(`Cleared ${rowsCleared} row(s)!`);
         }
+    }
+
+    updateScore(rowsCleared) {
+        const points = [0, 100, 300, 500, 800]
+        this.score += points[rowsCleared] || (rowsCleared * 200);
+
+        // update the score html
+        document.getElementById('score').innerText = `Score: ${this.score}`;
     }
 }

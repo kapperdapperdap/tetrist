@@ -75,4 +75,11 @@ class Board {
         // update the score html
         document.getElementById('score').innerText = `Score: ${this.score}`;
     }
+
+    resetGame() {
+        this.grid = Array.from({length:this.rows}, () => Array(this.cols).fill(0));  
+        this.score = 0;
+        //update html score
+        document.getElementById('score').innerText = `Score: ${this.score}`
+    }
 }

@@ -70,6 +70,11 @@ window.addEventListener('load', function() {
             }            
         }
 
+        // Game reset
+        if (keys ['r']) {
+            board.resetGame();
+        }
+
     }
 
     function gameLoop(timestamp) {

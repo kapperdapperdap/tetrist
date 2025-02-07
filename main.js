@@ -7,34 +7,83 @@ window.addEventListener('load', function() {
     let board = new Board();
     let currentPiece = new Piece(getRandomPiece());
 
+    let keys = {};
+    let lastMoveTime = 0;
+    let moveDelay = 120; // Delay for left/right movement (milliseconds)
+    let lastDropTime = 0;
+    let dropDelay = 300; // Normal drop speed
+    let softDrop = false;
+    let lastRotateTime = 0;
+    let rotateCooldown = 200; // Prevent rotating too quickly
+
     function getRandomPiece() {
-        const types = Object.keys(SHAPES); //shapes from piece.js
+        const types = Object.keys(SHAPES);
         return types[Math.floor(Math.random() * types.length)];
     }
 
     window.addEventListener('keydown', function(event) {
-        console.log(event.key);
-        // Ensure currentpiece exists
-        if (currentPiece) {
-            if (event.key === 'ArrowUp' || event.key === 'w') currentPiece.rotateRight(board);
-            if (event.key === 'ArrowLeft' || event.key === 'a') currentPiece.moveLeft(board);
-            if (event.key === 'ArrowRight' || event.key === 'd') currentPiece.moveRight(board);
-        }
+        keys[event.key] = true;
     });
 
-    function gameLoop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+    window.addEventListener('keyup', function(event) {
+        keys[event.key] = false;
+    });
 
-        if (!currentPiece.isPlaced) {
-            currentPiece.update(board);
-        } else {
-            // Create a new piece if the current one is placed
-            currentPiece = new Piece(getRandomPiece());
+    function handleInput() {
+        let now = performance.now();
+
+        // Move Left/Right (Throttled)
+        if (now - lastMoveTime > moveDelay) {
+            if (keys['ArrowLeft'] || keys['a']) {
+                currentPiece.moveLeft(board);
+                lastMoveTime = now;
+            }
+            if (keys['ArrowRight'] || keys['d']) {
+                currentPiece.moveRight(board);
+                lastMoveTime = now;
+            }
         }
+
+        // Rotate (Throttled)
+        if (now - lastRotateTime > rotateCooldown) {
+            if (keys['ArrowUp'] || keys['w']) {
+                currentPiece.rotateRight(board);
+                lastRotateTime = now;
+            }
+        }
+
+        // Soft Drop (Hold Down)
+        if (keys['ArrowDown'] || keys['s']) {
+            softDrop = true;
+        } else {
+            softDrop = false;
+        }
+    }
+
+    function gameLoop(timestamp) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        handleInput();
         currentPiece.draw(ctx);
         board.draw(ctx);
+
+        requestAnimationFrame(gameLoop);
     }
-    // Run gameLoop every dropInterval (300ms)
-    setInterval(gameLoop, 300);
+
+    function dropPiece() {
+        let now = performance.now();
+        let speed = softDrop ? 50 : dropDelay; // Faster when soft dropping
+
+        if (now - lastDropTime > speed) {
+            if (!currentPiece.isPlaced) {
+                currentPiece.update(board);
+            } else {
+                currentPiece = new Piece(getRandomPiece());
+            }
+            lastDropTime = now;
+        }
+    }
+
+    requestAnimationFrame(gameLoop);
+    setInterval(dropPiece, 30); // Runs faster but only drops when time passes
 });

@@ -16,10 +16,9 @@ window.addEventListener('load', function() {
         console.log(event.key);
         // Ensure currentpiece exists
         if (currentPiece) {
-            if (event.key === 'ArrowUp') currentPiece.rotateRight(board);
-            if (event.key === 'r') currentPiece.rotateLeft(board);
-            if (event.key === 'ArrowLeft') currentPiece.moveLeft(board);
-            if (event.key === 'ArrowRight') currentPiece.moveRight(board);
+            if (event.key === 'ArrowUp' || event.key === 'w') currentPiece.rotateRight(board);
+            if (event.key === 'ArrowLeft' || event.key === 'a') currentPiece.moveLeft(board);
+            if (event.key === 'ArrowRight' || event.key === 'd') currentPiece.moveRight(board);
         }
     });
 
@@ -37,5 +36,5 @@ window.addEventListener('load', function() {
         board.draw(ctx);
     }
     // Run gameLoop every dropInterval (300ms)
-    setInterval(gameLoop, 100);
+    setInterval(gameLoop, 300);
 });

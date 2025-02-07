@@ -118,7 +118,7 @@ class Piece {
         // If the new rotation resultts in collision, roll back:
         if (this.hasCollision(board)) {
             this.rotation = oldRotation;
-            this.segments = SHAPES[this.type][this.roation];
+            this.segments = SHAPES[this.type][this.rotation];
         }
     }
 
@@ -126,6 +126,7 @@ class Piece {
         const oldRotation = this.rotation;
         // Smart trick with rotation to the left (the + 4)
         this.rotation = (this.rotation - 1 + 4) % 4;
+        //Update the segments
         this.segments = SHAPES[this.type][this.rotation];
 
         // If the new rotation resultts in collision, roll back:
@@ -139,13 +140,35 @@ class Piece {
         const oldX = this.position.x;
         const oldY = this.position.y;
         this.position.x -= 1;
+        
+        if (this.hasCollision(board)) {
+            this.position.x = oldX;
+            this.position.y = oldY;
+        }
     }
 
     moveRight(board) {
         const oldX = this.position.x;
         const oldY = this.position.y;
         this.position.x += 1;
+
+        if (this.hasCollision(board)) {
+            this.position.x = oldX;
+            this.position.y = oldY;
+        }
     }
+
+    moveDown(board) {
+        const oldX = this.position.x;
+        const oldY = this.position.y;
+        this.position.x += 1;
+
+        if (this.hasCollision(board)) {
+            this.position.x = oldX;
+            this.position.y = oldY;
+        }
+    }
+
 
     // Collision if piece moves down 1
     checkCollision(board) {

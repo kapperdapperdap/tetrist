@@ -4,6 +4,7 @@ class Board {
         this.cols = cols;
         this.grid = Array.from({length:rows}, () => Array(cols).fill(0));   
         this.score = 0; 
+        this.highScore = 0;
     }
 
     draw(context) {
@@ -78,8 +79,13 @@ class Board {
 
     resetGame() {
         this.grid = Array.from({length:this.rows}, () => Array(this.cols).fill(0));  
+        //update high score
+        if (this.highScore < this.score) {
+            this.highScore = this.score;
+        }
         this.score = 0;
-        //update html score
+        //update html scores
         document.getElementById('score').innerText = `Score: ${this.score}`
+        document.getElementById('highscore').innerText = `Highscore: ${this.highScore}`
     }
 }

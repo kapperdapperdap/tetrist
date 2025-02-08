@@ -161,7 +161,7 @@ class Piece {
     moveDown(board) {
         const oldX = this.position.x;
         const oldY = this.position.y;
-        this.position.x += 1;
+        this.position.y += 1;
 
         if (this.hasCollision(board)) {
             this.position.x = oldX;
@@ -211,7 +211,6 @@ class Piece {
             return false;
         });
     }
-    
 
     update(board) {
         if (this.checkCollision(board)) {

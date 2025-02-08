@@ -32,48 +32,53 @@ window.addEventListener('load', function() {
     });
 
     function handleInput() {
-        let now = performance.now();
+        // Only allow R (restart key) if game is over
+        if (!board.gameOver) {
+            let now = performance.now();
 
-        // Move Left/Right (Throttled)
-        if (now - lastMoveTime > moveDelay) {
-            if (keys['ArrowLeft'] || keys['a']) {
-                currentPiece.moveLeft(board);
-                lastMoveTime = now;
+            // Move Left/Right (Throttled)
+            if (now - lastMoveTime > moveDelay) {
+                if (keys['ArrowLeft'] || keys['a']) {
+                    currentPiece.moveLeft(board);
+                    lastMoveTime = now;
+                }
+                if (keys['ArrowRight'] || keys['d']) {
+                    currentPiece.moveRight(board);
+                    lastMoveTime = now;
+                }
             }
-            if (keys['ArrowRight'] || keys['d']) {
-                currentPiece.moveRight(board);
-                lastMoveTime = now;
+
+            // Rotate (Throttled)
+            if (now - lastRotateTime > rotateCooldown) {
+                if (keys['ArrowUp'] || keys['w']) {
+                    currentPiece.rotateLeft(board);
+                    lastRotateTime = now;
+                }
             }
-        }
 
-        // Rotate (Throttled)
-        if (now - lastRotateTime > rotateCooldown) {
-            if (keys['ArrowUp'] || keys['w']) {
-                currentPiece.rotateLeft(board);
-                lastRotateTime = now;
+            // Soft Drop (Hold Down)
+            if (keys['ArrowDown'] || keys['s']) {
+                softDrop = true;
+            } else {
+                softDrop = false;
             }
+
+            // Hard Drop
+            if (now - lastHardDropTime > hardDropDelay) {
+                if (keys[' ']) { //spacebar
+                    currentPiece.hardDrop(board);
+                    lastHardDropTime = now;
+
+                }            
+            }
+            // Game reset
+            if (keys ['r']) {
+                board.resetGame();
         }
 
-        // Soft Drop (Hold Down)
-        if (keys['ArrowDown'] || keys['s']) {
-            softDrop = true;
-        } else {
-            softDrop = false;
         }
 
-        // Hard Drop
-        if (now - lastHardDropTime > hardDropDelay) {
-            if (keys[' ']) { //spacebar
-                currentPiece.hardDrop(board);
-                lastHardDropTime = now;
 
-            }            
-        }
-
-        // Game reset
-        if (keys ['r']) {
-            board.resetGame();
-        }
 
     }
 
@@ -88,6 +93,8 @@ window.addEventListener('load', function() {
     }
 
     function dropPiece() {
+        if (board.gameOver) return; // Stop dropping pieces when game is over
+
         let now = performance.now();
         let speed = softDrop ? 50 : dropDelay; // Faster when soft dropping
 

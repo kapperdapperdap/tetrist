@@ -3,8 +3,12 @@ class Board {
         this.gameOver = false;
         this.rows = rows;
         this.cols = cols;
-        this.grid = Array.from({length:rows}, () => Array(cols).fill(0));   
-        this.score = 0; 
+
+        this.grid = localStorage.getItem("grid") 
+            ? JSON.parse(localStorage.getItem("grid")) 
+            : Array.from({length:rows}, () => Array(cols).fill(0));   
+        
+            this.score = 0; 
         this.highScore = localStorage.getItem("highScore") ? parseInt(localStorage.getItem("highScore")) : 0; // Load high score
 
         // display high score when loading game
@@ -65,7 +69,8 @@ class Board {
 
         // After placing the piece, clear the rows
         this.clearRows();
-        
+        // Save the new grid position
+        localStorage.setItem("grid", JSON.stringify(this.grid));
     }
 
     clearRows() {

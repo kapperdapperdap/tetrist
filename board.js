@@ -1,13 +1,18 @@
 class Board {
     constructor(rows = 20, cols = 10) {
+        this.gameOver = false;
         this.rows = rows;
         this.cols = cols;
         this.grid = Array.from({length:rows}, () => Array(cols).fill(0));   
         this.score = 0; 
-        this.highScore = 0;
+        this.highScore = localStorage.getItem("highScore") ? parseInt(localStorage.getItem("highScore")) : 0; // Load high score
+
+        // display high score when loading game
+        document.getElementById('highscore').innerText = `Highscore: ${this.highScore}`;
     }
 
     draw(context) {
+        if (this.gameOver) return; // Don't draw the game if the game is over
         // Draw occupied grid cells
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
@@ -36,10 +41,16 @@ class Board {
 
     // Place the piece in the grid
     placePiece(piece) {
+        if (this.gameOver) return;
+
         //Place piece on grid
         piece.segments.forEach(segment => {
             let x = piece.position.x + segment.x;
             let y = piece.position.y + segment.y;
+
+            if (y < 0) {
+                this.gameOver = true;
+            }
             
             // Prevent out of bounds
             if (y >= 0 && y < this.rows && x >= 0 && x < this.cols) {
@@ -47,8 +58,14 @@ class Board {
             }
         });
 
+        if (this.gameOver) {
+            this.endGame();
+            return;
+        }
+
         // After placing the piece, clear the rows
         this.clearRows();
+        
     }
 
     clearRows() {
@@ -87,5 +104,12 @@ class Board {
         //update html scores
         document.getElementById('score').innerText = `Score: ${this.score}`
         document.getElementById('highscore').innerText = `Highscore: ${this.highScore}`
+        localStorage.setItem("highScore", this.highScore);
+        this.gameOver = false;
+    }
+
+    endGame() {
+        alert("Game Over! Press R to restart."); //popup
+        this.gameOver = true;
     }
 }
